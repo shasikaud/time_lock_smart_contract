@@ -12,9 +12,12 @@ contract Timelock {
     // timestamp when tokens will be released
     uint256 public releaseTime;
 
+    uint256 public lockedAmount;
+
     //access modifier to make certain functions only accessible by the contract owner
     modifier onlyOwner(){
       require(msg.sender == owner);
+      _;
     }
     
     // accept incoming ERC20
@@ -25,6 +28,7 @@ contract Timelock {
         beneficiary = _beneficiary;
         releaseTime = _releaseTime;
         owner = msg.sender;
+
     }
 
     // transfers ERC20 held by timelock to the beneficiary
@@ -37,15 +41,12 @@ contract Timelock {
         beneficiary.transfer(amount);
     }
 
-    function view_locked_balance() public (uint256) {  
-        uint256 amount = address(this).balance;
-        return amount;
+    function view_locked_balance() public returns (uint256) {  
+        lockedAmount = address(this).balance;
+        return lockedAmount;
     }
 
-    function time_remaining() public (uint256) {  
-        uint256 timestamp = releaseTime - block.timestamp;
-        return timestamp;
-    }
+
 
 
 }
